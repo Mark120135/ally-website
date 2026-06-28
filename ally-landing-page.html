@@ -388,12 +388,12 @@
   .story-sticky {
     height: 100vh;
     display: flex; flex-direction: column;
-    justify-content: flex-start; align-items: center;
-    padding: 56px 48px 36px; box-sizing: border-box;
+    justify-content: space-between; align-items: center;
+    padding: 56px 48px 44px; box-sizing: border-box;
     overflow: hidden;
   }
-  .story-head { text-align: center; margin-bottom: 44px; flex-shrink: 0; }
-  .story-h2 { font-family: var(--f-zh); font-size: clamp(28px, 3.6vw, 46px); font-weight: 700; color: var(--cream); letter-spacing: -0.01em; margin-bottom: 10px; }
+  .story-head { text-align: center; margin-bottom: 0; flex-shrink: 0; }
+  .story-h2 { font-family: var(--f-zh); font-size: clamp(26px, 3.2vw, 40px); font-weight: 700; color: var(--cream); letter-spacing: -0.01em; margin-bottom: 10px; }
   .story-sub { font-size: 16px; color: var(--sage-light); line-height: 1.8; }
 
   /* panels container — fixed height, panels stack absolutely */
@@ -416,7 +416,7 @@
   .tl-p { font-size: 15.5px; color: var(--sage-light); line-height: 1.9; }
 
   /* progress dots */
-  .story-progress { display: flex; gap: 10px; margin-top: 32px; flex-shrink: 0; }
+  .story-progress { display: flex; gap: 10px; margin-top: 0; flex-shrink: 0; }
   .story-prog-dot {
     width: 8px; height: 8px; border-radius: 50%;
     background: rgba(245,240,232,0.3);
