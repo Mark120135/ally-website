@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="以前只有老闆才有的助理，現在住在你的 LINE 裡。說一句話，Ally 幫你排行程、起草信件、整理文件。">
+  <title>ally — 住在你 LINE 裡的 AI 助理</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Noto+Sans+TC:wght@300;400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.23/dist/lenis.css">
+
+  <style>
+  /* ============================================================
+     DESIGN TOKENS
+  ============================================================ */
+  :root {
+    --forest:     #2D3B31;
+    --sage:       #7C9082;
+    --sage-light: #C5D4C8;
+    --cream:      #F5F0E8;
+    --copper:     #C8875B;
+    --copper-lt:  #D9A87D;
+    --text-1:     #2D3B31;
+    --text-2:     #5A6B5E;
+    --text-3:     #8A9A8E;
+    --white:      #FFFFFF;
+
+    --f-head: 'DM Sans', sans-serif;
+    --f-zh:   'Noto Sans TC', sans-serif;
+    --f-en:   'Inter', sans-serif;
+
+    --ease-out:   cubic-bezier(0.22, 1, 0.36, 1);
+    --max-w: 1140px;
+    --nav-h: 70px;
+  }
+
+  /* ============================================================
+     RESET
+  ============================================================ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; scroll-behavior: auto; }
+  body {
+    background: var(--cream);
+    color: var(--text-1);
+    font-family: var(--f-zh);
+    line-height: 1.75;
+    overflow-x: hidden;
+  }
+  a { text-decoration: none; color: inherit; }
+
+  /* ============================================================
+     LAYOUT
+  ============================================================ */
+  .wrap {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 52px;
+  }
+  @media (max-width: 768px) { .wrap { padding: 0 22px; } }
+
+  /* ============================================================
+     BUTTONS
+  ============================================================ */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--f-zh); font-weight: 700;
+    border-radius: 12px; cursor: pointer; border: none;
+    transition: background 0.22s, transform 0.22s, box-shadow 0.22s;
+    white-space: nowrap;
+  }
+  .btn-copper { background: var(--copper); color: var(--white); }
+  .btn-copper:hover { background: var(--copper-lt); transform: translateY(-2px); box-shadow: 0 10px 28px rgba(200,135,91,0.3); }
+  .btn.sm { font-size: 13px; padding: 9px 18px; border-radius: 9px; }
+  .btn.md { font-size: 15px; padding: 13px 26px; }
+  .btn.lg { font-size: 17px; padding: 18px 42px; border-radius: 14px; }
+
+  /* ============================================================
+     PILL / BADGE
+  ============================================================ */
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(124,144,130,0.14);
+    color: var(--sage); border-radius: 100px;
+    font-family: var(--f-zh); font-size: 13px; font-weight: 500;
+    padding: 5px 14px;
+  }
+  .pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sage); flex-shrink: 0; }
+  .pill-copper { background: rgba(200,135,91,0.14); color: var(--copper); }
+  .pill-copper .pill-dot { background: var(--copper); }
+
+  /* ============================================================
+     NAV
+  ============================================================ */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 400;
+    height: var(--nav-h);
+    display: flex; align-items: center;
+    transition: background 0.35s, border-color 0.35s, backdrop-filter 0.35s;
+    border-bottom: 1px solid transparent;
+  }
+  .nav.stuck {
+    background: rgba(245,240,232,0.95);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border-bottom-color: rgba(124,144,130,0.16);
+  }
+  .nav-inner {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 48px; width: 100%; box-sizing: border-box;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 9px; }
+  .nav-logo-name { font-family: var(--f-head); font-size: 21px; font-weight: 300; letter-spacing: 0.05em; color: var(--text-1); }
+  .nav-links { display: flex; list-style: none; gap: 32px; }
+  .nav .wrap { max-width: 100%; width: 100%; padding: 0; }
+  .nav-links a { font-family: var(--f-en); font-size: 13.5px; color: var(--text-2); transition: color 0.18s; }
+  .nav-links a:hover { color: var(--text-1); }
+  @media (max-width: 768px) { .nav-links { display: none; } }
+
+  /* ============================================================
+     DECORATIVE CURVE (arc-wrap)
+  ============================================================ */
+  .arc-wrap { position: relative; }
+  .deco-curve-svg {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 1; overflow: visible;
+  }
+  @media (max-width: 768px) { .deco-curve-svg { display: none; } }
+
+  /* ============================================================
+     SECTION 1 — HERO
+  ============================================================ */
+  .hero {
+    background: var(--cream);
+    padding: calc(var(--nav-h) + 72px) 0 80px;
+    position: relative; z-index: 2;
+    overflow: hidden;
+  }
+  /* Ambient warm glow */
+  .hero::after {
+    content: '';
+    position: absolute; top: -100px; right: -80px;
+    width: 560px; height: 560px;
+    background: radial-gradient(circle, rgba(200,135,91,0.07) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .hero-grid {
+    display: grid; grid-template-columns: 60fr 40fr;
+    gap: 52px; align-items: center;
+  }
+
+  /* Left col */
+  .hero-pill { margin-bottom: 22px; }
+  .hero-h1 {
+    font-family: var(--f-zh);
+    font-size: clamp(32px, 4.2vw, 54px);
+    font-weight: 700;
+    line-height: 1.28;
+    letter-spacing: -0.02em;
+    color: var(--text-1);
+    margin-bottom: 22px;
+  }
+  .hero-h1 .hl { display: block; overflow: hidden; }
+  .hero-h1 .hl-inner { display: block; }
+  .hero-h1 .copper { color: var(--copper); }
+  .hero-sub {
+    font-size: 16px; line-height: 1.9; color: var(--text-2);
+    max-width: 440px; margin-bottom: 36px;
+  }
+  .hero-cta-group { display: flex; flex-direction: column; align-items: flex-start; gap: 11px; }
+  .hero-fine { font-family: var(--f-en); font-size: 12px; color: var(--text-3); }
+
+  /* Right col: phone + character */
+  .hero-right {
+    display: flex; align-items: flex-end; justify-content: center;
+    position: relative; z-index: 2;
+  }
+  .phone-wrap {
+    transform-origin: bottom center;
+    position: relative; z-index: 2;
+  }
+  .phone-frame {
+    width: 238px; height: 490px;
+    background: linear-gradient(158deg, #1F2E24, #0D1910);
+    border-radius: 40px; padding: 11px; position: relative;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 44px 76px rgba(45,59,49,0.38), 0 18px 36px rgba(45,59,49,0.2);
+  }
+  .phone-di { /* Dynamic Island */
+    position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+    width: 82px; height: 24px; background: #060E07; border-radius: 14px; z-index: 6;
+  }
+  .phone-screen { width: 100%; height: 100%; background: #EBEBEB; border-radius: 30px; overflow: hidden; display: flex; flex-direction: column; }
+
+  /* Status bar */
+  .psb { background: #fff; height: 48px; display: flex; align-items: flex-end; padding: 0 14px 8px; flex-shrink: 0; }
+  .psb-time { font-family: var(--f-en); font-size: 12px; font-weight: 600; color: #111; }
+  .psb-icons { margin-left: auto; display: flex; gap: 4px; align-items: center; }
+
+  /* LINE header */
+  .plh { background: #fff; border-bottom: 1px solid #EAECEC; padding: 7px 12px 9px; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .plh-back { font-size: 22px; font-weight: 200; color: #06C755; line-height: 1; }
+  .plh-av { width: 32px; height: 32px; border-radius: 50%; background: var(--sage); display: flex; align-items: center; justify-content: center; font-family: var(--f-head); font-size: 12px; font-weight: 600; color: var(--cream); flex-shrink: 0; }
+  .plh-name { font-family: var(--f-zh); font-size: 13px; font-weight: 700; color: #111; line-height: 1.2; }
+  .plh-sub  { font-family: var(--f-en); font-size: 10px; color: #A0A0A0; }
+
+  /* Chat body */
+  .pcb { flex: 1; padding: 12px 10px; display: flex; flex-direction: column; gap: 9px; background: #EBEBEB; overflow: hidden; }
+  .pcb-date { text-align: center; font-family: var(--f-en); font-size: 10px; color: #AAAAAA; }
+  .pcb-row { display: flex; gap: 5px; align-items: flex-end; }
+  .pcb-row.me { flex-direction: row-reverse; }
+  .pcb-av { width: 22px; height: 22px; border-radius: 50%; background: var(--sage); display: flex; align-items: center; justify-content: center; font-family: var(--f-head); font-size: 8px; font-weight: 600; color: var(--cream); flex-shrink: 0; }
+  .bub { padding: 7px 10px; border-radius: 12px; font-family: var(--f-zh); font-size: 11px; line-height: 1.5; max-width: 78%; }
+  .bub.me { background: #06C755; color: #fff; border-radius: 12px 12px 2px 12px; }
+  .bub.ai { background: #fff; color: #222; border-radius: 12px 12px 12px 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+
+  /* Confirm card */
+  .cc { background: #fff; border-radius: 9px; padding: 8px 10px; font-family: var(--f-zh); font-size: 10.5px; color: #333; max-width: 78%; margin-left: 27px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); line-height: 1.5; }
+  .cc-h { font-size: 11px; font-weight: 700; color: #111; padding-bottom: 5px; margin-bottom: 5px; border-bottom: 1px solid #F0F0F0; }
+  .cc-r { display: flex; gap: 4px; margin: 2px 0; }
+  .cc-l { color: #C0C0C0; min-width: 36px; }
+  .cc-v { color: #06C755; font-weight: 700; }
+  .cc-btns { display: flex; gap: 6px; margin-top: 7px; }
+  .cc-btn { flex: 1; text-align: center; padding: 5px; border-radius: 5px; font-size: 10px; font-weight: 700; font-family: var(--f-zh); }
+  .cc-btn.y { background: #06C755; color: #fff; }
+  .cc-btn.n { background: #F0F0F0; color: #888; }
+
+  /* Input bar */
+  .pib { background: #F5F5F5; border-top: 1px solid #DCDCDC; padding: 7px 9px; display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+  .pib-field { flex: 1; background: #fff; border: 1px solid #E5E5E5; border-radius: 18px; padding: 6px 12px; font-family: var(--f-zh); font-size: 11px; color: #AAAAAA; }
+  .pib-send { width: 27px; height: 27px; border-radius: 50%; background: #06C755; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .pib-send svg { width: 12px; height: 12px; fill: #fff; }
+
+  /* Hero character */
+  .hero-char {
+    position: absolute; bottom: 0; right: -58px;
+    z-index: 3; flex-shrink: 0;
+  }
+  .hero-char img { width: auto; height: 220px; }
+
+  /* Float animation */
+  @keyframes drift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  @keyframes drift2 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+  @keyframes drift3 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+  .float  { animation: drift  3.2s ease-in-out infinite; }
+  .float2 { animation: drift2 3.6s ease-in-out 0.3s infinite; }
+  .float3 { animation: drift3 2.9s ease-in-out 0.5s infinite; }
+
+  @media (max-width: 768px) {
+    .hero { padding: calc(var(--nav-h) + 40px) 0 52px; }
+    .hero-grid { grid-template-columns: 1fr; gap: 44px; text-align: center; }
+    .hero-pill { display: flex; justify-content: center; }
+    .hero-h1 { font-size: 34px; }
+    .hero-sub { max-width: 100%; }
+    .hero-cta-group { align-items: center; }
+    .hero-right { flex-direction: column; align-items: center; }
+    .hero-char { position: static; margin-top: -28px; }
+    .hero-char img { width: auto; height: 130px; }
+    .phone-frame { width: 214px; height: 436px; }
+  }
+
+  /* ============================================================
+     SECTION 2 — TRUST BANNER
+  ============================================================ */
+  .trust-banner {
+    background: var(--forest);
+    padding: 22px 0;
+    position: relative; z-index: 2;
+  }
+  .banner-inner {
+    display: flex; align-items: center; justify-content: center;
+    gap: 18px; flex-wrap: wrap;
+  }
+  .banner-item {
+    font-family: var(--f-en); font-size: 14px; font-weight: 400;
+    letter-spacing: 0.05em; color: var(--sage-light);
+    white-space: nowrap;
+  }
+  .banner-sep { color: rgba(197,212,200,0.4); font-size: 16px; }
+
+  /* ============================================================
+     SECTION 3 — SCENES
+  ============================================================ */
+  .sec-scenes {
+    background: var(--white);
+    padding: 100px 0 80px;
+    position: relative; z-index: 2;
+  }
+
+  .scenes-head { margin-bottom: 28px; }
+  .scenes-header-wrap { margin-bottom: 52px; }
+  .scenes-eyebrow {
+    font-family: var(--f-en); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.13em; text-transform: uppercase;
+    color: var(--sage); margin-bottom: 14px;
+  }
+  .scenes-h2 {
+    font-family: var(--f-zh);
+    font-size: clamp(48px, 6vw, 72px);
+    font-weight: 700; letter-spacing: -0.03em; color: var(--text-1);
+    line-height: 1;
+    clip-path: inset(0 100% 0 0);
+  }
+
+  /* Scene rows — alternating layouts */
+  .scene-rows { display: flex; flex-direction: column; gap: 0; }
+  .scene-row {
+    display: grid; align-items: center; gap: 52px;
+    padding: 72px 0;
+    border-top: 1px solid rgba(45,59,49,0.08);
+  }
+  .scene-row.lr { grid-template-columns: 55fr 45fr; }
+  .scene-row.rl { grid-template-columns: 45fr 55fr; }
+  .scene-row.rl .scene-text-col { order: 1; }
+  .scene-row.rl .scene-chat-col { order: 2; }
+
+  /* Dark chat mockup */
+  .chat-mock {
+    background: var(--forest); border-radius: 18px;
+    padding: 28px 24px 20px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .cm-row { display: flex; gap: 7px; align-items: flex-end; }
+  .cm-row.me { flex-direction: row-reverse; }
+  .cm-av {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--sage); display: flex; align-items: center; justify-content: center;
+    font-family: var(--f-head); font-size: 9px; font-weight: 600;
+    color: var(--cream); flex-shrink: 0;
+  }
+  .cm-bub {
+    padding: 9px 13px; border-radius: 13px;
+    font-family: var(--f-zh); font-size: 13px; line-height: 1.56;
+    max-width: 80%;
+  }
+  .cm-bub.me  { background: #06C755; color: #fff; border-radius: 13px 13px 3px 13px; }
+  .cm-bub.ai  { background: rgba(255,255,255,0.11); color: var(--cream); border-radius: 13px 13px 13px 3px; }
+  .cm-action { margin: 2px 0 2px 31px; }
+  .cm-action-btn {
+    display: inline-block; background: var(--copper); color: #fff;
+    font-family: var(--f-zh); font-size: 12px; font-weight: 700;
+    padding: 6px 16px; border-radius: 7px;
+  }
+  .cm-status {
+    border-top: 1px solid rgba(255,255,255,0.09);
+    padding-top: 12px; margin-top: 2px;
+    font-family: var(--f-en); font-size: 11px;
+    color: var(--copper); letter-spacing: 0.04em;
+  }
+
+  /* Scene text col */
+  .scene-text-col { padding: 8px 0; }
+  .scene-h { font-family: var(--f-zh); font-size: clamp(20px, 2vw, 28px); font-weight: 700; color: var(--text-1); margin-bottom: 13px; line-height: 1.38; }
+  .scene-p { font-size: 15px; line-height: 1.9; color: var(--text-2); margin-bottom: 20px; }
+
+  /* Scene 3 — full width dark card */
+  .scene-full {
+    background: var(--forest); border-radius: 22px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 48px; align-items: center; padding: 52px 48px;
+    margin-top: 72px;
+    border-top: none;
+  }
+  .scene-full .scene-h { color: var(--cream); }
+  .scene-full .scene-p { color: var(--sage-light); }
+  .scene-full .scene-text-col { border-left: 1px solid rgba(245,240,232,0.12); padding-left: 48px; }
+
+  @media (max-width: 768px) {
+    .sec-scenes { padding: 72px 0 52px; }
+    .scenes-h2 { font-size: 48px; }
+    .scene-row { grid-template-columns: 1fr; gap: 32px; padding: 52px 0; }
+    .scene-row.rl .scene-text-col { order: 1; }
+    .scene-row.rl .scene-chat-col { order: 2; }
+    .scene-full { grid-template-columns: 1fr; gap: 28px; padding: 36px 24px; }
+    .scene-full .scene-text-col { border-left: none; padding-left: 0; border-top: 1px solid rgba(245,240,232,0.12); padding-top: 28px; }
+  }
+
+  /* ============================================================
+     SECTION 4 — STORY TIMELINE
+  ============================================================ */
+  .sec-story {
+    background: var(--sage);
+    padding: 100px 0 80px;
+    position: relative; z-index: 2;
+  }
+  .story-head { text-align: center; margin-bottom: 72px; }
+  .story-h2 { font-family: var(--f-zh); font-size: clamp(26px, 3.2vw, 40px); font-weight: 700; color: var(--cream); letter-spacing: -0.01em; margin-bottom: 10px; }
+  .story-sub { font-size: 15.5px; color: var(--sage-light); line-height: 1.8; }
+
+  /* Timeline container — flex row layout */
+  .timeline { max-width: 900px; margin: 0 auto; }
+
+  .story-row {
+    display: flex; gap: 60px; align-items: center; padding: 60px 0;
+  }
+  .story-row + .story-row {
+    border-top: 1px solid rgba(245,240,232,0.15);
+  }
+  .story-col-text { flex: 1; }
+  .story-col-img  { flex: 1; display: flex; align-items: center; justify-content: center; }
+  .story-col-img img { height: 260px; width: auto; object-fit: contain; display: block; }
+  .story-row-title { font-family: var(--f-zh); font-size: 16px; font-weight: 700; color: var(--cream); margin-bottom: 10px; }
+  .tl-time { font-family: var(--f-en); font-size: 11.5px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sage-light); margin-bottom: 9px; }
+  .tl-p { font-size: 14.5px; color: var(--sage-light); line-height: 1.88; }
+
+  @media (max-width: 768px) {
+    .sec-story { padding: 72px 0 52px; }
+    .story-row { flex-direction: column; gap: 24px; padding: 40px 0; }
+    .story-col-img img { height: 180px; }
+  }
+
+  /* ============================================================
+     SECTION 5 — TRUST
+  ============================================================ */
+  .sec-trust {
+    background: var(--cream);
+    padding: 100px 0;
+  }
+  .trust-layout {
+    display: grid; grid-template-columns: 40fr 60fr;
+    gap: 80px; align-items: start;
+  }
+  /* Sticky left */
+  .trust-left { position: sticky; top: calc(var(--nav-h) + 40px); }
+  .trust-eyebrow { font-family: var(--f-en); font-size: 11px; font-weight: 500; letter-spacing: 0.13em; text-transform: uppercase; color: var(--sage); margin-bottom: 16px; }
+  .trust-h2 { font-family: var(--f-zh); font-size: clamp(30px, 3.5vw, 46px); font-weight: 700; line-height: 1.3; letter-spacing: -0.02em; color: var(--text-1); margin-bottom: 18px; }
+  .trust-lead { font-size: 15px; line-height: 1.88; color: var(--text-2); }
+
+  /* Scrolling right */
+  .trust-cards { display: flex; flex-direction: column; gap: 16px; padding-top: 12px; }
+  .trust-card {
+    background: var(--white); border-radius: 22px; padding: 36px 32px;
+    transform: scale(0.95); opacity: 0;
+    transition: box-shadow 0.25s;
+  }
+  .trust-card:hover { box-shadow: 0 16px 44px rgba(45,59,49,0.1); }
+  .tc-icon-wrap { margin-bottom: 20px; }
+  .tc-icon { width: 48px; height: 48px; border-radius: 50%; background: var(--sage); display: flex; align-items: center; justify-content: center; }
+  .tc-icon svg { width: 22px; height: 22px; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .tc-title { font-family: var(--f-zh); font-size: 17.5px; font-weight: 700; color: var(--text-1); margin-bottom: 11px; line-height: 1.4; }
+  .tc-body { font-size: 14.5px; line-height: 1.85; color: var(--text-2); }
+
+  @media (max-width: 768px) {
+    .sec-trust { padding: 72px 0; }
+    .trust-layout { grid-template-columns: 1fr; gap: 48px; }
+    .trust-left { position: static; }
+    .trust-card { transform: none; opacity: 1; }
+  }
+
+  /* ============================================================
+     SECTION 6 — CTA
+  ============================================================ */
+  .sec-cta {
+    background: var(--forest);
+    padding: 100px 0 80px; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .sec-cta::before {
+    content: ''; position: absolute; bottom: -80px; left: 50%; transform: translateX(-50%);
+    width: 700px; height: 500px;
+    background: radial-gradient(ellipse, rgba(200,135,91,0.07) 0%, transparent 68%);
+    pointer-events: none;
+  }
+  .cta-char { display: flex; justify-content: center; margin-bottom: 32px; }
+  .cta-char img { width: auto; height: 240px; }
+  .cta-h2 { font-family: var(--f-zh); font-size: 36px; font-weight: 500; line-height: 1.3; margin-bottom: 14px; letter-spacing: -0.01em; }
+  .cta-h2 .line-1 { color: var(--cream); display: block; }
+  .cta-h2 .line-2 { color: var(--copper); display: block; }
+  .cta-sub { font-size: 15.5px; color: var(--sage-light); line-height: 1.82; margin-bottom: 40px; }
+  .cta-btn-wrap { display: flex; flex-direction: column; align-items: center; gap: 13px; }
+  .cta-fine { font-family: var(--f-en); font-size: 12.5px; color: var(--text-3); letter-spacing: 0.02em; }
+
+  @media (max-width: 768px) { .sec-cta { padding: 72px 0 60px; } }
+
+  /* ============================================================
+     FOOTER
+  ============================================================ */
+  footer {
+    background: var(--forest);
+    border-top: 1px solid rgba(197,212,200,0.09);
+    padding: 28px 0;
+  }
+  .ft-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
+  .ft-logo { display: flex; align-items: center; gap: 9px; }
+  .ft-logo-name { font-family: var(--f-head); font-size: 18px; font-weight: 300; letter-spacing: 0.05em; color: var(--cream); }
+  .ft-links { display: flex; gap: 22px; }
+  .ft-links a { font-family: var(--f-zh); font-size: 13px; color: var(--sage-light); transition: color 0.18s; }
+  .ft-links a:hover { color: var(--cream); }
+  .ft-copy { font-family: var(--f-en); font-size: 13px; color: var(--text-3); }
+  @media (max-width: 768px) { .ft-inner { flex-direction: column; align-items: flex-start; gap: 18px; } }
+
+  /* ============================================================
+     FIX: Nav pill CTA
+  ============================================================ */
+  .btn.nav-pill { border-radius: 24px !important; padding: 11px 26px !important; font-size: 13.5px; }
+
+  /* ============================================================
+     FIX: Scene character images
+  ============================================================ */
+  .scene-char-img { width: 90px; height: auto; display: block; margin-bottom: 12px; }
+
+
+  /* ============================================================
+     FIX 5: Why Ally section
+  ============================================================ */
+  .sec-why {
+    background: var(--cream);
+    padding: 88px 0 80px;
+    position: relative; z-index: 2;
+  }
+  .why-h {
+    font-family: var(--f-zh);
+    font-size: clamp(22px, 2.6vw, 34px);
+    font-weight: 700; color: var(--text-1);
+    letter-spacing: -0.02em; line-height: 1.4;
+    margin-bottom: 14px;
+  }
+  .why-lead {
+    font-size: 15.5px; line-height: 1.88; color: var(--text-2);
+    max-width: 560px; margin-bottom: 48px;
+  }
+  .why-cards {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .why-card {
+    background: var(--white); border-radius: 20px; padding: 36px 32px;
+    box-shadow: 0 2px 12px rgba(45,59,49,0.05);
+    transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out);
+  }
+  .why-card:hover { transform: translateY(-4px); box-shadow: 0 14px 40px rgba(45,59,49,0.1); }
+  .why-icon {
+    width: 48px; height: 48px; border-radius: 13px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 18px; font-size: 22px;
+  }
+  .why-icon.sage { background: rgba(124,144,130,0.14); }
+  .why-icon.copper { background: rgba(200,135,91,0.12); }
+  .why-card-h { font-family: var(--f-zh); font-size: 17px; font-weight: 700; color: var(--text-1); margin-bottom: 11px; line-height: 1.42; }
+  .why-card-p { font-size: 14.5px; line-height: 1.88; color: var(--text-2); }
+  @media (max-width: 768px) {
+    .sec-why { padding: 64px 0; }
+    .why-cards { grid-template-columns: 1fr; }
+  }
+
+  /* ============================================================
+     FIX 6: Voice highlight bar
+  ============================================================ */
+  .voice-bar {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: #FBF6EE;
+    border-left: 3px solid var(--copper);
+    border-radius: 10px;
+    padding: 16px 22px;
+    margin-bottom: 52px;
+    max-width: 580px;
+  }
+  .voice-bar-emoji { font-size: 20px; flex-shrink: 0; margin-top: 1px; line-height: 1; }
+  .voice-bar-title { font-family: var(--f-zh); font-size: 14px; font-weight: 600; color: var(--text-1); margin-bottom: 4px; }
+  .voice-bar-text { font-family: var(--f-en); font-size: 13px; color: var(--text-2); line-height: 1.65; }
+  </style>
+</head>
+
+<body>
+
+<!-- ============================================================
+     ARC WRAP: contains sections 1–3 (+ banner) for decorative curve
+============================================================ -->
+<div class="arc-wrap">
+
+  <!-- Decorative sage curve (desktop only) -->
+  <svg class="deco-curve-svg" viewBox="0 0 1440 2800" preserveAspectRatio="none" aria-hidden="true">
+    <path id="decoCurvePath"
+      d="M 1300 200 C 1200 500, 200 700, 260 1100 C 320 1500, 1180 1700, 180 2100"
+      fill="none" stroke="#7C9082" stroke-width="5" stroke-linecap="round"
+      opacity="0.13"/>
+  </svg>
+
+  <!-- NAV -->
+  <nav class="nav" id="mainNav">
+    <div class="wrap">
+      <div class="nav-inner">
+        <a href="/" class="nav-logo" aria-label="ally 首頁">
+          <img src="./images/ally-pose-8.png" alt="" style="height:80px;width:auto;">
+        </a>
+        <ul class="nav-links">
+          <li><a href="#scenes">使用情境</a></li>
+          <li><a href="#story">一天的故事</a></li>
+          <li><a href="#trust">安全說明</a></li>
+        </ul>
+        <a href="https://lin.ee/OtxxnLU" target="_blank" class="btn btn-copper nav-pill">立即在 LINE 開始使用</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ======================================================
+       SECTION 1: HERO
+  ====================================================== -->
+  <section class="hero" id="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+
+        <!-- Left: copy -->
+        <div class="hero-text">
+          <div class="hero-pill">
+            <span class="pill"><span class="pill-dot"></span>對話式 AI 助理</span>
+          </div>
+
+          <h1 class="hero-h1">
+            <span class="hl"><span class="hl-inner" id="hl1">以前只有老闆</span></span>
+            <span class="hl"><span class="hl-inner" id="hl2">才有的助理，</span></span>
+            <span class="hl"><span class="hl-inner copper" id="hl3">現在住在你的 LINE 裡。</span></span>
+          </h1>
+
+          <p class="hero-sub" id="heroSub">
+            說一句話，Ally 就幫你排行程、起草信件、整理文件。<br>
+            每一個動作都等你確認——你掌控全局，它負責執行。
+          </p>
+
+          <div class="hero-cta-group" id="heroCta">
+            <a href="https://lin.ee/OtxxnLU" target="_blank" class="btn btn-copper md">加 LINE 好友 — 免費開始</a>
+            <span class="hero-fine">需授權 Google 帳號 · 隨時可撤銷</span>
+          </div>
+        </div>
+
+        <!-- Right: phone + character -->
+        <div class="hero-right">
+
+          <div class="phone-wrap" id="heroPhone">
+            <div class="phone-frame">
+              <div class="phone-di"></div>
+              <div class="phone-screen">
+                <!-- Status bar -->
+                <div class="psb">
+                  <span class="psb-time">9:41</span>
+                  <div class="psb-icons">
+                    <svg width="14" height="10" viewBox="0 0 14 10" fill="#111"><rect x="0" y="5.5" width="2" height="4.5" rx="0.5"/><rect x="3" y="3.5" width="2" height="6.5" rx="0.5"/><rect x="6" y="1.5" width="2" height="8.5" rx="0.5"/><rect x="9" y="0" width="2" height="10" rx="0.5" opacity="0.3"/></svg>
+                    <svg width="13" height="9" viewBox="0 0 13 9" fill="none" stroke="#111" stroke-width="1.3" stroke-linecap="round"><circle cx="6.5" cy="8.2" r="0.7" fill="#111" stroke="none"/><path d="M 4.5 6.5 A 2.4 2.4 0 0 1 8.5 6.5"/><path d="M 2 4.5 A 5.5 5.5 0 0 1 11 4.5"/></svg>
+                    <svg width="20" height="9" viewBox="0 0 20 9"><rect x="0.5" y="0.8" width="16.5" height="7.4" rx="1.8" stroke="#111" stroke-width="1" fill="none"/><rect x="1.5" y="2" width="13" height="5" rx="1" fill="#111"/><path d="M 18 2.8 v 3.4" stroke="#111" stroke-width="1.4" stroke-linecap="round"/></svg>
+                  </div>
+                </div>
+                <!-- LINE header -->
+                <div class="plh">
+                  <span class="plh-back">‹</span>
+                  <div class="plh-av"><img src="./images/ally-pose-9.png" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>
+                  <div><div class="plh-name">Ally</div><div class="plh-sub">AI 助理</div></div>
+                </div>
+                <!-- Chat -->
+                <div class="pcb">
+                  <div class="pcb-date">今天</div>
+                  <div class="pcb-row me pcb-anim"><div class="bub me">幫我把明天客戶會議改到週五早上十點</div></div>
+                  <div class="pcb-row pcb-anim"><div class="pcb-av"><img src="./images/ally-pose-9.png" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div><div class="bub ai">好的，請確認修改：</div></div>
+                  <div class="cc pcb-anim">
+                    <div class="cc-h">客戶策略會議</div>
+                    <div class="cc-r"><span class="cc-l">原時間</span><span>明天 15:00</span></div>
+                    <div class="cc-r"><span class="cc-l">新時間</span><span class="cc-v">週五 10:00</span></div>
+                    <div class="cc-btns"><div class="cc-btn y">確認修改</div><div class="cc-btn n">取消</div></div>
+                  </div>
+                </div>
+                <!-- Input bar -->
+                <div class="pib"><div class="pib-field">輸入訊息…</div><div class="pib-send"><svg viewBox="0 0 12 12"><path d="M11 6L1 1l2 5-2 5z"/></svg></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero character — Pose 5: head tilted, hand open (mirrored to face phone) -->
+          <div class="hero-char" id="heroChar">
+            <div class="float">
+              <img src="./images/ally-pose-5.png" alt="" style="display:block;">
+            </div>
+          </div>
+
+        </div><!-- /hero-right -->
+      </div><!-- /hero-grid -->
+    </div><!-- /wrap -->
+  </section>
+
+  <!-- ======================================================
+       SECTION 2: TRUST BANNER
+  ====================================================== -->
+  <div class="trust-banner" id="trustBanner">
+    <div class="wrap">
+      <div class="banner-inner">
+        <span class="banner-item">每個動作都等你確認</span>
+        <span class="banner-sep">·</span>
+        <span class="banner-item">只讀你授權的範圍</span>
+        <span class="banner-sep">·</span>
+        <span class="banner-item">對話不會用於訓練</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       SECTION 2.5: WHY ALLY
+  ====================================================== -->
+  <section class="sec-why" id="why-ally">
+    <div class="wrap">
+      <h2 class="why-h">你不需要懂 AI，<br>你只需要一個助理。</h2>
+      <p class="why-lead">很多人知道 AI 很強，但不知道從哪裡開始用。Ally 就是那個起點——你不用學任何東西，直接跟它說話，它就幫你把事情搞定。</p>
+      <div class="why-cards">
+
+        <div class="why-card">
+          <div class="why-icon sage">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#7C9082" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="9"/>
+              <path d="M 11 7 v 1.5 M 8.5 9.5 a 3 3 0 1 1 5 2.5 L 11 14 M 11 17 v 0.2"/>
+            </svg>
+          </div>
+          <div class="why-card-h">想跟上 AI 時代，但不知從何開始</div>
+          <p class="why-card-p">不用研究工具、不用學操作。把 Ally 加為 LINE 好友，它就是你進入 AI 生活的第一步。它幫你接行事曆、整理文件、建表單——你只需要開口說。</p>
+        </div>
+
+        <div class="why-card">
+          <div class="why-icon copper">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#C8875B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="2" width="16" height="19" rx="2"/>
+              <line x1="7" y1="7" x2="15" y2="7"/>
+              <line x1="7" y1="11" x2="15" y2="11"/>
+              <line x1="7" y1="15" x2="11" y2="15"/>
+            </svg>
+          </div>
+          <div class="why-card-h">老是忘東忘西，記事本又懶得寫</div>
+          <p class="why-card-p">有什麼事就直接跟 Ally 說，它幫你記著、幫你追蹤、到時間提醒你。不用打開其他工具，不用整理筆記，說完就沒你的事了。</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================
+       SECTION 3: SCENES
+  ====================================================== -->
+  <section class="sec-scenes" id="scenes">
+    <div class="wrap">
+
+      <div class="scenes-header-wrap">
+        <div class="scenes-head">
+          <div class="scenes-eyebrow">真實使用情境</div>
+          <h2 class="scenes-h2" id="scenesTitle">你說，它辦。</h2>
+        </div>
+        <div class="voice-bar" style="margin-bottom:0;">
+          <span class="voice-bar-emoji">🎙️</span>
+          <div>
+            <div class="voice-bar-title">不想打字？直接說話也可以</div>
+            <div class="voice-bar-text">傳一段語音給 Ally，它聽得懂，直接幫你處理。就像真的在跟助理說話。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scene-rows">
+
+        <!-- Scene 1: calendar — L chat / R text -->
+        <div class="scene-row lr" id="scene1">
+          <div class="scene-chat-col" id="sc1chat">
+            <div class="chat-mock">
+              <div class="cm-row me"><div class="cm-bub me">下週一早上十點幫我排設計審查，一小時</div></div>
+              <div class="cm-row"><div class="cm-av"><img src="./images/ally-pose-9.png" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div><div class="cm-bub ai">找到空檔：週一 10:00–11:00<br>幫你建一個「設計審查」？</div></div>
+              <div class="cm-action"><span class="cm-action-btn">確認</span></div>
+              <div class="cm-row"><div class="cm-av"><img src="./images/ally-pose-9.png" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div><div class="cm-bub ai">好的，已新增到行事曆。</div></div>
+              <div class="cm-status">行事曆已更新 · 週一 10:00</div>
+            </div>
+          </div>
+          <div class="scene-text-col" id="sc1text">
+            <span class="pill pill-copper" style="margin-bottom:16px;"><span class="pill-dot"></span>行事曆</span>
+            <h3 class="scene-h">幫你守住<br>專注時間</h3>
+            <p class="scene-p">直接跟 Ally 說你需要什麼時間，它找空檔、建行程、設提醒，一氣呵成。不用打開行事曆找位置。</p>
+          </div>
+        </div>
+
+        <!-- Scene 2: project tracking — L text / R chat -->
+        <div class="scene-row rl" id="scene2">
+          <div class="scene-text-col" id="sc2text">
+            <span class="pill pill-copper" style="margin-bottom:16px;"><span class="pill-dot"></span>專案追蹤</span>
+            <h3 class="scene-h">問一句話，<br>Ally 幫你整理這週</h3>
+            <p class="scene-p">不用翻備忘錄、不用重整行事曆。問 Ally 一句話，它把這週最重要的事都整理好給你看。</p>
+          </div>
+          <div class="scene-chat-col" id="sc2chat">
+            <div class="chat-mock">
+              <div class="cm-row me"><div class="cm-bub me">我這禮拜要做什麼？</div></div>
+              <div class="cm-row"><div class="cm-av"><img src="./images/ally-pose-9.png" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div><div class="cm-bub ai">幫你整理了一下，這禮拜有幾件事要注意：<br><div style="margin-top:8px;display:flex;flex-direction:column;gap:6px;"><div style="display:flex;align-items:flex-start;gap:6px;"><span style="flex-shrink:0">📋</span><span>禮拜五前要傳活動設計表給 Mark</span></div><div style="display:flex;align-items:flex-start;gap:6px;"><span style="flex-shrink:0">📚</span><span>經濟作業專案兩週後截止，「採訪兩個人」這個任務還沒完成，這禮拜可以先排進去</span></div><div style="display:flex;align-items:flex-start;gap:6px;"><span style="flex-shrink:0">🛒</span><span>今天晚上記得買牛奶</span></div></div></div></div>
+              <div class="cm-status">專案追蹤已更新 · 3 項代辦事項</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scene 3: form creation — full width dark card -->
+        <div class="scene-full" id="scene3">
+          <div class="chat-mock" style="background:rgba(255,255,255,0.07); border: 1px solid rgba(245,240,232,0.1);">
+            <div class="cm-row me"><div class="cm-bub me">幫我把 Mark 傳來的活動計劃表，做成一個表單去調查想報名的人</div></div>
+            <div class="cm-row"><div class="cm-av"><img src="./images/ally-pose-9.png" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div><div class="cm-bub ai">收到，幫你建好了。<br>表單包含：<br>• 姓名<br>• 聯絡方式<br>• 想參加的場次<br>• 飲食需求<br><br>連結已備妥，要我分享給誰嗎？</div></div>
+            <div class="cm-status">Google 表單已建立 · 連結已備妥</div>
+          </div>
+          <div class="scene-text-col">
+            <span class="pill pill-copper" style="margin-bottom:16px;"><span class="pill-dot"></span>Google 表單</span>
+            <h3 class="scene-h">說一句話，<br>文件變成表單。</h3>
+            <p class="scene-p">說一句話，Ally 幫你把文件變成表單。不用手動建欄位，不用複製貼上，連結備妥讓你分享。</p>
+          </div>
+        </div>
+
+      </div><!-- /scene-rows -->
+    </div><!-- /wrap -->
+  </section>
+
+</div><!-- /arc-wrap -->
+
+
+<!-- ============================================================
+     SECTION 4 — STORY TIMELINE
+============================================================ -->
+<section class="sec-story" id="story">
+  <div class="wrap">
+    <div class="story-head">
+      <h2 class="story-h2 js-reveal">無論你一天怎麼過，Ally 都在身邊</h2>
+      <p class="story-sub js-reveal">從早到晚，你的日程它都記得。</p>
+    </div>
+
+    <div class="timeline" id="timeline">
+
+      <!-- 早晨：文字左、圖片右 -->
+      <div class="story-row" id="tli1">
+        <div class="story-col-text">
+          <div class="tl-time">早晨 08:22</div>
+          <div class="story-row-title">出門前，行程都整理好了</div>
+          <p class="tl-p">早上起床打開 LINE，Ally 已經幫你整理好今天的行程。有衝突的會議，它主動標出來讓你決定怎麼調整。</p>
+        </div>
+        <div class="story-col-img">
+          <img src="./images/ally-pose-3.png?v=2" alt="">
+        </div>
+      </div>
+
+      <!-- 開會：圖片左、文字右 -->
+      <div class="story-row" id="tli2">
+        <div class="story-col-img">
+          <img src="./images/ally-pose-4.png?v=2" alt="">
+        </div>
+        <div class="story-col-text">
+          <div class="tl-time">下午 14:30</div>
+          <div class="story-row-title">開會忙碌時，一句話就記下</div>
+          <p class="tl-p">會議中想到要做的事，傳一句話給 Ally 就好。它幫你加進待辦清單，不打斷你的專注。</p>
+        </div>
+      </div>
+
+      <!-- 晚上：文字左、圖片右 -->
+      <div class="story-row" id="tli3">
+        <div class="story-col-text">
+          <div class="tl-time">晚上 20:00</div>
+          <div class="story-row-title">下班前，提醒你明天的事</div>
+          <p class="tl-p">Ally 在你結束工作前，輕輕提醒明天要跟進的事項。不催促，只是讓你安心。</p>
+        </div>
+        <div class="story-col-img">
+          <img src="./images/ally-pose-7.png?v=2" alt="">
+        </div>
+      </div>
+
+    </div><!-- /timeline -->
+  </div><!-- /wrap -->
+</section>
+
+
+<!-- ============================================================
+     SECTION 5 — TRUST
+============================================================ -->
+<section class="sec-trust" id="trust">
+  <div class="wrap">
+    <div class="trust-layout">
+
+      <!-- Sticky left -->
+      <div class="trust-left">
+        <div class="trust-eyebrow">你不需要擔心的事</div>
+        <h2 class="trust-h2">你的帳號，<br>始終在你手裡。</h2>
+        <p class="trust-lead">Ally 會動你的 Google 帳號——這件事值得你搞清楚。以下是我們怎麼做的。</p>
+      </div>
+
+      <!-- Scrolling right cards -->
+      <div class="trust-cards">
+
+        <div class="trust-card" id="tc1">
+          <div class="tc-icon-wrap">
+            <div class="tc-icon">
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="3" width="18" height="18" rx="3"/>
+                <path d="M 8.5 12 l 2.5 2.5 4.5 -5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="tc-title">每一個動作都等你點頭</div>
+          <p class="tc-body">Ally 不會偷偷動你的行事曆或文件。寫入之前，一定先讓你看到，等你確認才執行。你說不要，就什麼都不會發生。</p>
+        </div>
+
+        <div class="trust-card" id="tc2">
+          <div class="tc-icon-wrap">
+            <div class="tc-icon">
+              <svg viewBox="0 0 24 24">
+                <rect x="5" y="11" width="14" height="11" rx="2"/>
+                <path d="M 8 11 V 7 a 4 4 0 1 1 8 0 v 4"/>
+              </svg>
+            </div>
+          </div>
+          <div class="tc-title">只讀你授權的東西</div>
+          <p class="tc-body">Ally 透過 Google 官方 OAuth 取得授權，只存取你明確開放的範圍——行事曆、文件。你可以在 Google 帳號設定裡隨時撤銷。</p>
+        </div>
+
+        <div class="trust-card" id="tc3">
+          <div class="tc-icon-wrap">
+            <div class="tc-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M 12 3 l 8 4 v 5 c 0 4.8 -3.6 9.1 -8 10.4 C 7.6 21.1 4 16.8 4 12 V 7 z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="tc-title">你的對話不會拿去訓練</div>
+          <p class="tc-body">你跟 Ally 說的事情不會被儲存用於模型訓練，也不會流向任何第三方。你的私人內容就是你的。</p>
+        </div>
+
+      </div><!-- /trust-cards -->
+    </div><!-- /trust-layout -->
+  </div><!-- /wrap -->
+</section>
+
+
+<!-- ============================================================
+     SECTION 6 — CTA
+============================================================ -->
+<section class="sec-cta" id="cta">
+  <div class="wrap">
+    <div class="cta-char" id="ctaChar">
+      <!-- Pose 1: Default smile -->
+      <div class="float">
+        <img src="./images/ally-pose-1.png" alt="">
+      </div>
+    </div>
+
+    <h2 class="cta-h2" id="ctaH2">
+      <span class="line-1">你的下一件事，</span>
+      <span class="line-2">就讓 Ally 來。</span>
+    </h2>
+    <p class="cta-sub" id="ctaSub">在 LINE 說一句話，就能開始。<br>不需要下載 app，不需要學操作。</p>
+    <div class="cta-btn-wrap" id="ctaBtn">
+      <a href="https://lin.ee/OtxxnLU" target="_blank" class="btn btn-copper lg" id="ctaMainBtn">在 LINE 中開啟 Ally</a>
+      <span class="cta-fine">免費使用 · 隨時可停止 · 不需要信用卡</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer>
+  <div class="wrap">
+    <div class="ft-inner">
+      <div class="ft-logo">
+        <svg width="26" height="30" viewBox="0 0 38 44" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="19" cy="18" r="16" fill="#F5F0E8" stroke="#7C9082" stroke-width="1.6"/>
+          <path d="M 9 30 L 4 42 L 17 33 Z" fill="#F5F0E8"/>
+          <polyline points="9,30 4,42 17,33" stroke="#7C9082" stroke-width="1.6" fill="none" stroke-linejoin="round"/>
+          <ellipse cx="4" cy="21" rx="4.5" ry="3" fill="#F5F0E8" stroke="#7C9082" stroke-width="1.4" transform="rotate(-20 4 21)"/>
+          <ellipse cx="34" cy="21" rx="4.5" ry="3" fill="#F5F0E8" stroke="#7C9082" stroke-width="1.4" transform="rotate(20 34 21)"/>
+          <line x1="5" y1="24" x2="33" y2="22" stroke="#C8875B" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="14" cy="16" r="2.6" fill="#2D3B31"/>
+          <circle cx="15.2" cy="14.8" r="0.9" fill="white"/>
+          <circle cx="24" cy="16" r="2.6" fill="#2D3B31"/>
+          <circle cx="25.2" cy="14.8" r="0.9" fill="white"/>
+          <path d="M 15 21 Q 19 25 23 21" stroke="#2D3B31" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        </svg>
+        <span class="ft-logo-name">ally</span>
+      </div>
+      <div class="ft-links">
+        <a href="#">隱私權政策</a>
+        <a href="#">服務條款</a>
+        <a href="#">聯絡我們</a>
+      </div>
+      <span class="ft-copy">© 2026 Ally. All rights reserved.</span>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ============================================================
+     CDN SCRIPTS
+============================================================ -->
+<script src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<script>
+/* ============================================================
+   LENIS — smooth scroll
+============================================================ */
+const isMobile = window.innerWidth < 768;
+const lenis = new Lenis({
+  duration: isMobile ? 0.7 : 1.1,
+  easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+});
+gsap.ticker.add(time => { lenis.raf(time * 1000); });
+gsap.ticker.lagSmoothing(0);
+
+gsap.registerPlugin(ScrollTrigger);
+lenis.on('scroll', ScrollTrigger.update);
+
+/* ============================================================
+   NAV — stuck on scroll
+============================================================ */
+const mainNav = document.getElementById('mainNav');
+lenis.on('scroll', ({ scroll }) => {
+  mainNav.classList.toggle('stuck', scroll > 40);
+});
+
+/* ============================================================
+   HERO — line-by-line slide from left + phone rotate-in
+============================================================ */
+gsap.timeline({ delay: 0.15 })
+  .from('#hl1', { x: -44, opacity: 0, duration: 0.72, ease: 'power3.out' })
+  .from('#hl2', { x: -44, opacity: 0, duration: 0.72, ease: 'power3.out' }, '-=0.52')
+  .from('#hl3', { x: -44, opacity: 0, duration: 0.72, ease: 'power3.out' }, '-=0.52')
+  .from('#heroSub', { opacity: 0, y: 16, duration: 0.6, ease: 'power2.out' }, '-=0.2')
+  .from('#heroCta', { opacity: 0, y: 14, duration: 0.55, ease: 'power2.out' }, '-=0.4')
+  .fromTo('#heroPhone',
+    { opacity: 0, x: 32, rotate: 4 },
+    { opacity: 1, x: 0, rotate: 0, duration: 0.9, ease: 'power3.out', transformOrigin: 'bottom center' },
+    0.28)
+  .fromTo('#heroChar',
+    { opacity: 0, x: 18 },
+    { opacity: 1, x: 0, duration: 0.7, ease: 'power2.out' },
+    0.72);
+
+/* Hero phone chat bubbles: stagger appear */
+gsap.from('.pcb-anim', {
+  opacity: 0, y: 8,
+  stagger: 0.38,
+  duration: 0.48, ease: 'power2.out',
+  delay: 0.9,
+});
+
+/* ============================================================
+   TRUST BANNER — scroll reveal
+============================================================ */
+gsap.from('#trustBanner', {
+  opacity: 0,
+  scrollTrigger: { trigger: '#trustBanner', start: 'top 90%', once: true },
+  duration: 0.6, ease: 'power2.out',
+});
+
+/* ============================================================
+   SCENES — clip-path title reveal + alternating slide-in
+============================================================ */
+/* Title: clip-path from left */
+gsap.to('#scenesTitle', {
+  clipPath: 'inset(0 0% 0 0)',
+  duration: 0.9, ease: 'power3.out',
+  scrollTrigger: { trigger: '#scenesTitle', start: 'top 82%', once: true },
+});
+
+/* Scene 1: chat from left, text from right */
+if (!isMobile) {
+  gsap.from('#sc1chat', {
+    x: -60, opacity: 0, duration: 0.8, ease: 'power2.out',
+    scrollTrigger: { trigger: '#scene1', start: 'top 78%', once: true },
+  });
+  gsap.from('#sc1text', {
+    x: 40, opacity: 0, duration: 0.8, ease: 'power2.out', delay: 0.15,
+    scrollTrigger: { trigger: '#scene1', start: 'top 78%', once: true },
+  });
+
+  /* Scene 2: text from left, chat from right */
+  gsap.from('#sc2text', {
+    x: -40, opacity: 0, duration: 0.8, ease: 'power2.out',
+    scrollTrigger: { trigger: '#scene2', start: 'top 78%', once: true },
+  });
+  gsap.from('#sc2chat', {
+    x: 60, opacity: 0, duration: 0.8, ease: 'power2.out', delay: 0.15,
+    scrollTrigger: { trigger: '#scene2', start: 'top 78%', once: true },
+  });
+}
+
+/* Scene 3: from bottom */
+gsap.from('#scene3', {
+  y: isMobile ? 40 : 70, opacity: 0, duration: 0.9, ease: 'power2.out',
+  scrollTrigger: { trigger: '#scene3', start: 'top 82%', once: true },
+});
+
+/* Mobile: simple fade for scenes 1–2 */
+if (isMobile) {
+  gsap.from('#scene1', { opacity: 0, y: 30, duration: 0.7, ease: 'power2.out', scrollTrigger: { trigger: '#scene1', start: 'top 85%', once: true } });
+  gsap.from('#scene2', { opacity: 0, y: 30, duration: 0.7, ease: 'power2.out', scrollTrigger: { trigger: '#scene2', start: 'top 85%', once: true } });
+}
+
+/* ============================================================
+   STORY TIMELINE — item side-slides
+============================================================ */
+/* Items: slide from appropriate side */
+const slideLeft  = { x: isMobile ? 0 : -60, opacity: 0, duration: 0.75, ease: 'power2.out' };
+const slideRight = { x: isMobile ? 0 : 60,  opacity: 0, duration: 0.75, ease: 'power2.out' };
+const yFade      = { y: 30, opacity: 0, duration: 0.65, ease: 'power2.out' };
+
+[
+  ['#tli1', slideLeft],
+  ['#tli2', slideRight],
+  ['#tli3', slideLeft],
+].forEach(([id, vars]) => {
+  gsap.from(id, {
+    ...vars,
+    scrollTrigger: { trigger: id, start: 'top 82%', once: true },
+  });
+});
+
+/* ============================================================
+   TRUST CARDS — sticky + staggered scale+fade
+============================================================ */
+['#tc1', '#tc2', '#tc3'].forEach((id, i) => {
+  if (isMobile) {
+    /* Mobile: reset inline style (CSS sets opacity/scale to 1 on mobile) */
+    gsap.set(id, { opacity: 1, scale: 1 });
+    return;
+  }
+  gsap.to(id, {
+    opacity: 1, scale: 1,
+    duration: 0.65, ease: 'power2.out',
+    scrollTrigger: {
+      trigger: id,
+      start: 'top 84%',
+      once: true,
+    },
+  });
+});
+
+/* ============================================================
+   CTA — scale from 0.85 + delayed button
+============================================================ */
+gsap.from('#ctaChar', { opacity: 0, scale: 0.88, duration: 0.75, ease: 'power2.out', scrollTrigger: { trigger: '#cta', start: 'top 80%', once: true } });
+gsap.from('#ctaH2',  { opacity: 0, scale: 0.88, duration: 0.72, ease: 'power2.out', delay: 0.14, scrollTrigger: { trigger: '#cta', start: 'top 80%', once: true } });
+gsap.from('#ctaSub', { opacity: 0, y: 14, duration: 0.6, ease: 'power2.out', delay: 0.28, scrollTrigger: { trigger: '#cta', start: 'top 80%', once: true } });
+gsap.from('#ctaBtn', { opacity: 0, y: 14, duration: 0.55, ease: 'power2.out', delay: 0.42, scrollTrigger: { trigger: '#cta', start: 'top 80%', once: true } });
+
+/* CTA button: breathing pulse */
+gsap.to('#ctaMainBtn', {
+  scale: 1.025,
+  duration: 1.8, ease: 'sine.inOut',
+  repeat: -1, yoyo: true,
+});
+
+/* ============================================================
+   DECORATIVE CURVE — stroke-dashoffset draw on scroll
+============================================================ */
+if (!isMobile) {
+  const curvePath = document.getElementById('decoCurvePath');
+  if (curvePath) {
+    try {
+      const curveLen = curvePath.getTotalLength();
+      gsap.set(curvePath, { strokeDasharray: curveLen, strokeDashoffset: curveLen });
+      gsap.to(curvePath, {
+        strokeDashoffset: 0,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.arc-wrap',
+          start: 'top top',
+          end: 'bottom 85%',
+          scrub: 1.5,
+        },
+      });
+    } catch(e) {}
+  }
+}
+</script>
+</body>
+</html>
