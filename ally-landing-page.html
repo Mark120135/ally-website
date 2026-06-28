@@ -380,10 +380,10 @@
   ============================================================ */
   .sec-story {
     background: var(--sage);
-    padding: 100px 0 80px;
+    padding: 72px 0 56px;
     position: relative; z-index: 2;
   }
-  .story-head { text-align: center; margin-bottom: 72px; }
+  .story-head { text-align: center; margin-bottom: 44px; }
   .story-h2 { font-family: var(--f-zh); font-size: clamp(26px, 3.2vw, 40px); font-weight: 700; color: var(--cream); letter-spacing: -0.01em; margin-bottom: 10px; }
   .story-sub { font-size: 15.5px; color: var(--sage-light); line-height: 1.8; }
 
@@ -391,7 +391,7 @@
   .timeline { max-width: 900px; margin: 0 auto; }
 
   .story-row {
-    display: flex; gap: 60px; align-items: center; padding: 60px 0;
+    display: flex; gap: 60px; align-items: center; padding: 40px 0;
   }
   .story-row + .story-row {
     border-top: 1px solid rgba(245,240,232,0.15);
@@ -1086,23 +1086,31 @@ if (isMobile) {
 }
 
 /* ============================================================
-   STORY TIMELINE — item side-slides
+   STORY TIMELINE — split col animations
 ============================================================ */
-/* Items: slide from appropriate side */
-const slideLeft  = { x: isMobile ? 0 : -60, opacity: 0, duration: 0.75, ease: 'power2.out' };
-const slideRight = { x: isMobile ? 0 : 60,  opacity: 0, duration: 0.75, ease: 'power2.out' };
-const yFade      = { y: 30, opacity: 0, duration: 0.65, ease: 'power2.out' };
-
-[
-  ['#tli1', slideLeft],
-  ['#tli2', slideRight],
-  ['#tli3', slideLeft],
-].forEach(([id, vars]) => {
-  gsap.from(id, {
-    ...vars,
-    scrollTrigger: { trigger: id, start: 'top 82%', once: true },
+if (!isMobile) {
+  /* Each row: text col slides from one side, img col from the other, with stagger */
+  const storyRows = [
+    { row: '#tli1', textSide: -80, imgSide: 80 },
+    { row: '#tli2', textSide: 80,  imgSide: -80 },
+    { row: '#tli3', textSide: -80, imgSide: 80 },
+  ];
+  storyRows.forEach(({ row, textSide, imgSide }) => {
+    const el = document.querySelector(row);
+    if (!el) return;
+    const textCol = el.querySelector('.story-col-text');
+    const imgCol  = el.querySelector('.story-col-img');
+    const tl = gsap.timeline({ scrollTrigger: { trigger: row, start: 'top 82%', once: true } });
+    tl.from(textCol, { x: textSide, opacity: 0, duration: 0.75, ease: 'power2.out' })
+      .from(imgCol,  { x: imgSide,  opacity: 0, duration: 0.75, ease: 'power2.out' }, '-=0.5');
   });
-});
+} else {
+  /* Mobile: simple fade-up */
+  ['#tli1', '#tli2', '#tli3'].forEach(id => {
+    gsap.from(id, { y: 30, opacity: 0, duration: 0.65, ease: 'power2.out',
+      scrollTrigger: { trigger: id, start: 'top 85%', once: true } });
+  });
+}
 
 /* ============================================================
    TRUST CARDS — sticky + staggered scale+fade
