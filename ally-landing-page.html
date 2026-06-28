@@ -378,35 +378,70 @@
   /* ============================================================
      SECTION 4 — STORY TIMELINE
   ============================================================ */
-  .sec-story {
-    background: var(--sage);
-    padding: 72px 0 56px;
-    position: relative; z-index: 2;
+  /* Story section — pinned panel switcher */
+  .sec-story { background: var(--sage); position: relative; z-index: 2; }
+
+  .story-sticky {
+    height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: 0 48px; box-sizing: border-box;
+    overflow: hidden;
   }
-  .story-head { text-align: center; margin-bottom: 44px; }
+  .story-head { text-align: center; margin-bottom: 36px; flex-shrink: 0; }
   .story-h2 { font-family: var(--f-zh); font-size: clamp(26px, 3.2vw, 40px); font-weight: 700; color: var(--cream); letter-spacing: -0.01em; margin-bottom: 10px; }
   .story-sub { font-size: 15.5px; color: var(--sage-light); line-height: 1.8; }
 
-  /* Timeline container — flex row layout */
-  .timeline { max-width: 900px; margin: 0 auto; }
-
-  .story-row {
-    display: flex; gap: 60px; align-items: center; padding: 40px 0;
+  /* panels container — fixed height, panels stack absolutely */
+  .story-panels-wrap {
+    position: relative;
+    width: 100%; max-width: 900px;
+    height: 270px;
+    flex-shrink: 0;
   }
-  .story-row + .story-row {
-    border-top: 1px solid rgba(245,240,232,0.15);
+  .story-panel {
+    position: absolute; top: 0; left: 0; right: 0;
+    display: flex; gap: 60px; align-items: center;
+    will-change: transform, opacity;
   }
   .story-col-text { flex: 1; }
   .story-col-img  { flex: 1; display: flex; align-items: center; justify-content: center; }
-  .story-col-img img { height: 260px; width: auto; object-fit: contain; display: block; }
+  .story-col-img img { height: 240px; width: auto; object-fit: contain; display: block; }
   .story-row-title { font-family: var(--f-zh); font-size: 16px; font-weight: 700; color: var(--cream); margin-bottom: 10px; }
   .tl-time { font-family: var(--f-en); font-size: 11.5px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sage-light); margin-bottom: 9px; }
   .tl-p { font-size: 14.5px; color: var(--sage-light); line-height: 1.88; }
 
+  /* progress dots */
+  .story-progress { display: flex; gap: 10px; margin-top: 36px; flex-shrink: 0; }
+  .story-prog-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(245,240,232,0.3);
+    transition: width 0.4s ease, border-radius 0.4s ease, background 0.4s ease;
+  }
+  .story-prog-dot.is-active {
+    width: 24px; border-radius: 4px;
+    background: var(--copper);
+  }
+
+  /* Mobile: revert to vertical stack */
   @media (max-width: 768px) {
-    .sec-story { padding: 72px 0 52px; }
-    .story-row { flex-direction: column; gap: 24px; padding: 40px 0; }
+    .sec-story { padding-bottom: 56px; }
+    .story-sticky {
+      height: auto; overflow: visible;
+      padding: 60px 24px 0;
+      justify-content: flex-start;
+    }
+    .story-panels-wrap { position: static; height: auto; }
+    .story-panel {
+      position: static !important;
+      opacity: 1 !important; transform: none !important;
+      flex-direction: column; gap: 20px;
+      padding: 32px 0;
+      border-top: 1px solid rgba(245,240,232,0.15);
+    }
+    .story-panel:first-child { border-top: none; }
     .story-col-img img { height: 180px; }
+    .story-progress { display: none; }
   }
 
   /* ============================================================
@@ -808,16 +843,18 @@
      SECTION 4 — STORY TIMELINE
 ============================================================ -->
 <section class="sec-story" id="story">
-  <div class="wrap">
+  <!-- story-sticky is pinned by GSAP for desktop; on mobile reverts to normal flow -->
+  <div class="story-sticky" id="storySticky">
+
     <div class="story-head">
-      <h2 class="story-h2 js-reveal">無論你一天怎麼過，Ally 都在身邊</h2>
-      <p class="story-sub js-reveal">從早到晚，你的日程它都記得。</p>
+      <h2 class="story-h2">無論你一天怎麼過，Ally 都在身邊</h2>
+      <p class="story-sub">從早到晚，你的日程它都記得。</p>
     </div>
 
-    <div class="timeline" id="timeline">
+    <div class="story-panels-wrap" id="storyPanels">
 
-      <!-- 早晨：文字左、圖片右 -->
-      <div class="story-row" id="tli1">
+      <!-- Panel 1: 早晨 -->
+      <div class="story-panel" id="sp1">
         <div class="story-col-text">
           <div class="tl-time">早晨 08:22</div>
           <div class="story-row-title">出門前，行程都整理好了</div>
@@ -828,8 +865,8 @@
         </div>
       </div>
 
-      <!-- 開會：圖片左、文字右 -->
-      <div class="story-row" id="tli2">
+      <!-- Panel 2: 開會 (img left) -->
+      <div class="story-panel" id="sp2">
         <div class="story-col-img">
           <img src="./images/ally-pose-4.png?v=2" alt="">
         </div>
@@ -840,8 +877,8 @@
         </div>
       </div>
 
-      <!-- 晚上：文字左、圖片右 -->
-      <div class="story-row" id="tli3">
+      <!-- Panel 3: 晚上 -->
+      <div class="story-panel" id="sp3">
         <div class="story-col-text">
           <div class="tl-time">晚上 20:00</div>
           <div class="story-row-title">下班前，提醒你明天的事</div>
@@ -852,8 +889,16 @@
         </div>
       </div>
 
-    </div><!-- /timeline -->
-  </div><!-- /wrap -->
+    </div><!-- /story-panels-wrap -->
+
+    <!-- Progress dots -->
+    <div class="story-progress" id="storyProgress">
+      <div class="story-prog-dot is-active"></div>
+      <div class="story-prog-dot"></div>
+      <div class="story-prog-dot"></div>
+    </div>
+
+  </div><!-- /story-sticky -->
 </section>
 
 
@@ -1086,31 +1131,56 @@ if (isMobile) {
 }
 
 /* ============================================================
-   STORY TIMELINE — split col animations
+   STORY — pinned panel switcher (desktop) / fade-up (mobile)
 ============================================================ */
-if (!isMobile) {
-  /* Each row: text col slides from one side, img col from the other, with stagger */
-  const storyRows = [
-    { row: '#tli1', textSide: -80, imgSide: 80 },
-    { row: '#tli2', textSide: 80,  imgSide: -80 },
-    { row: '#tli3', textSide: -80, imgSide: 80 },
-  ];
-  storyRows.forEach(({ row, textSide, imgSide }) => {
-    const el = document.querySelector(row);
-    if (!el) return;
-    const textCol = el.querySelector('.story-col-text');
-    const imgCol  = el.querySelector('.story-col-img');
-    const tl = gsap.timeline({ scrollTrigger: { trigger: row, start: 'top 82%', once: true } });
-    tl.from(textCol, { x: textSide, opacity: 0, duration: 0.75, ease: 'power2.out' })
-      .from(imgCol,  { x: imgSide,  opacity: 0, duration: 0.75, ease: 'power2.out' }, '-=0.5');
+(function () {
+  const panels  = gsap.utils.toArray('.story-panel');
+  const dots    = gsap.utils.toArray('.story-prog-dot');
+
+  if (isMobile) {
+    /* Mobile: simple fade-up for each panel */
+    panels.forEach(p => {
+      gsap.from(p, { y: 28, opacity: 0, duration: 0.6, ease: 'power2.out',
+        scrollTrigger: { trigger: p, start: 'top 88%', once: true } });
+    });
+    return;
+  }
+
+  /* Desktop: pin the sticky wrapper, switch panels on scroll progress */
+  let currentIdx = 0;
+
+  /* Set initial states: panel 0 visible, others off to the right */
+  gsap.set(panels[1], { opacity: 0, x: 80 });
+  gsap.set(panels[2], { opacity: 0, x: 80 });
+
+  function switchPanel(next, dir) {
+    if (next === currentIdx) return;
+    const prev = panels[currentIdx];
+    const curr = panels[next];
+    gsap.killTweensOf([prev, curr]);
+    gsap.to(prev,   { opacity: 0, x: dir * -80, duration: 0.55, ease: 'power2.inOut' });
+    gsap.fromTo(curr,
+      { opacity: 0, x: dir * 80 },
+      { opacity: 1, x: 0,        duration: 0.55, ease: 'power2.out', delay: 0.07 }
+    );
+    dots.forEach((d, i) => d.classList.toggle('is-active', i === next));
+    currentIdx = next;
+  }
+
+  /* Pin: stick for 2 extra viewport heights (3 panels × ~1vh each pause) */
+  ScrollTrigger.create({
+    trigger: '#story',
+    start: 'top top',
+    end: '+=200%',
+    pin: '#storySticky',
+    pinSpacing: true,
+    onUpdate(self) {
+      const p = self.progress;
+      const target = p < 0.34 ? 0 : p < 0.67 ? 1 : 2;
+      switchPanel(target, target > currentIdx ? 1 : -1);
+    },
   });
-} else {
-  /* Mobile: simple fade-up */
-  ['#tli1', '#tli2', '#tli3'].forEach(id => {
-    gsap.from(id, { y: 30, opacity: 0, duration: 0.65, ease: 'power2.out',
-      scrollTrigger: { trigger: id, start: 'top 85%', once: true } });
-  });
-}
+})();
 
 /* ============================================================
    TRUST CARDS — sticky + staggered scale+fade
