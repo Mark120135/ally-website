@@ -2,63 +2,421 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<title>隱私權政策 — Ally</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>隱私權政策 — Ally｜Privacy Policy</title>
+<meta name="description" content="Ally 的隱私權政策：我們收集什麼、Google 資料怎麼處理、怎麼刪除。Ally privacy policy, including Google API Limited Use disclosure.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,700&family=Noto+Sans+TC:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  body { font-family: -apple-system, "Noto Sans TC", sans-serif; max-width: 720px; margin: 40px auto; padding: 0 20px; line-height: 1.7; color: #2d3748; }
-  h1 { font-size: 1.6em; }
-  h2 { font-size: 1.2em; margin-top: 1.8em; border-bottom: 1px solid #eee; padding-bottom: 4px; }
-  code { background: #f5f0e8; padding: 2px 6px; border-radius: 4px; }
-  footer { margin-top: 3em; color: #888; font-size: 0.9em; }
+  :root {
+    --forest:#2D3B31; --sage:#7C9082; --sage-light:#C5D4C8; --cream:#F5F0E8;
+    --copper:#C8875B; --text-1:#2D3B31; --text-2:#5A6B5E; --text-3:#8A9A8E; --white:#FFFFFF;
+    --f-head:'DM Sans',sans-serif; --f-zh:'Noto Sans TC',sans-serif; --f-en:'Inter',sans-serif;
+    --max-w:760px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--cream);color:var(--text-1);font-family:var(--f-zh);line-height:1.85;
+       -webkit-font-smoothing:antialiased}
+  a{color:var(--copper);text-decoration:none;border-bottom:1px solid rgba(200,135,91,.35)}
+  a:hover{border-bottom-color:var(--copper)}
+  .nav{background:var(--forest);padding:16px 0}
+  .wrap{max-width:var(--max-w);margin:0 auto;padding:0 22px}
+  .nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .brand{font-family:var(--f-head);font-size:19px;font-weight:300;letter-spacing:.05em;
+         color:var(--cream);border:0}
+  .langsw{display:flex;gap:6px}
+  .langsw button{font-family:var(--f-en);font-size:12px;letter-spacing:.06em;cursor:pointer;
+      background:transparent;color:var(--sage-light);border:1px solid rgba(197,212,200,.3);
+      border-radius:20px;padding:5px 13px;transition:all .18s}
+  .langsw button[aria-pressed="true"]{background:var(--sage-light);color:var(--forest);
+      border-color:var(--sage-light)}
+  main{padding:56px 0 72px}
+  h1{font-family:var(--f-zh);font-size:clamp(26px,4vw,34px);font-weight:700;line-height:1.35}
+  .updated{font-family:var(--f-en);font-size:13px;color:var(--text-3);margin-top:10px}
+  .lede{margin-top:22px;font-size:16px;color:var(--text-2)}
+  h2{font-family:var(--f-zh);font-size:19px;font-weight:700;margin:46px 0 14px;
+     padding-bottom:8px;border-bottom:1px solid rgba(124,144,130,.25)}
+  h3{font-size:15.5px;font-weight:700;margin:26px 0 8px;color:var(--text-1)}
+  p,li{font-size:15px;color:var(--text-2)}
+  p{margin:12px 0}
+  ul,ol{margin:12px 0 12px 20px}
+  li{margin:7px 0}
+  strong{color:var(--text-1);font-weight:700}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;display:block;
+        overflow-x:auto;white-space:nowrap}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid rgba(124,144,130,.22);
+        vertical-align:top;white-space:normal}
+  th{font-weight:700;color:var(--text-1);background:rgba(124,144,130,.08)}
+  td{color:var(--text-2)}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+       background:rgba(124,144,130,.13);padding:2px 6px;border-radius:4px;color:var(--text-1)}
+  .callout{background:var(--white);border-left:3px solid var(--copper);border-radius:6px;
+           padding:16px 20px;margin:20px 0}
+  .callout p{margin:6px 0}
+  footer{background:var(--forest);padding:26px 0;margin-top:20px}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center}
+  footer a{color:var(--sage-light);font-size:13px;border:0}
+  footer a:hover{color:var(--cream)}
+  .ft-links{display:flex;gap:20px}
+  .ft-copy{font-family:var(--f-en);font-size:13px;color:var(--text-3)}
+  [data-lang]{display:none}
+  [data-lang].on{display:block}
+  html[lang="en"] body{font-family:var(--f-en)}
+  html[lang="en"] h1,html[lang="en"] h2,html[lang="en"] h3{font-family:var(--f-head)}
+  @media(max-width:600px){main{padding:40px 0 56px}}
+
 </style>
 </head>
 <body>
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="./">ally</a>
+    <div class="langsw">
+      <button type="button" data-set="zh" aria-pressed="true">中文</button>
+      <button type="button" data-set="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+</nav>
 
-<h1>Ally — 隱私權政策 / Privacy Policy</h1>
-<p>最後更新：2026-08-25</p>
+<main class="wrap">
+<div data-lang="zh" class="on">
+<h1>隱私權政策</h1>
+<p class="updated">最後更新：2026-09-12</p>
+<p class="lede">Ally 是一個住在 LINE 與 WhatsApp 裡的個人 AI 助理。它會動你的行事曆與文件——
+正因為如此，你有權知道它拿得到什麼、拿不到什麼、東西放在哪裡、以及怎麼一次全部收回。
+這一頁講的就是這些，沒有法務黑話。</p>
 
-<h2>Ally 是什麼</h2>
-<p>Ally 是一個透過 LINE 與 WhatsApp 使用的個人助理，幫助使用者管理待辦事項、專案、
-行事曆、以及 Google 文件／試算表／表單。</p>
+<h2>誰在處理你的資料</h2>
+<p>Ally 由個人開發者營運，聯絡方式：<a href="mailto:likemark1022@gmail.com">likemark1022@gmail.com</a>。
+任何隱私權問題、資料查詢或刪除請求，寄到這個信箱都會收到。</p>
 
 <h2>我們收集哪些資料</h2>
+<table>
+  <tr><th>類別</th><th>內容</th><th>為什麼需要</th></tr>
+  <tr><td>帳號識別碼</td><td>你的 LINE / WhatsApp 使用者識別碼、時區、偏好語言</td>
+      <td>辨識「你」是誰、把提醒送到對的時間</td></tr>
+  <tr><td>你傳給 Ally 的訊息</td><td>你輸入的文字，以及 Ally 的回覆</td>
+      <td>理解你的指令、維持對話脈絡</td></tr>
+  <tr><td>你建立的內容</td><td>待辦、專案、任務、筆記、期限、可用時段、提醒規則</td>
+      <td>這就是 Ally 幫你顧著的東西</td></tr>
+  <tr><td>暫時處理的檔案</td><td>你傳的語音、圖片、文件</td>
+      <td>轉逐字稿、辨識、摘要；處理完就刪（見下方保留期限）</td></tr>
+  <tr><td>Google 授權（選用）</td><td>加密後的授權憑證，以及你連結過的檔案 ID／檔名</td>
+      <td>幫你動行事曆與文件；下次你說「那份表單」時找得回來</td></tr>
+  <tr><td>營運紀錄</td><td>動作稽核紀錄、每日用量統計</td>
+      <td>出事時能追查、控制成本</td></tr>
+</table>
+<p><strong>我們不會取得</strong>你的真實姓名、電子郵件地址（除非你自己告訴 Ally）、
+通訊錄、聯絡人清單，也不會讀你在 LINE／WhatsApp 上跟其他人的對話——
+Ally 只看得到你直接傳給它的訊息。</p>
+
+<h2>Google 使用者資料（重點段落）</h2>
+<p>連結 Google 帳號是<strong>選用的</strong>。不連結，Ally 的待辦與專案功能照常運作。
+你如果連結，我們只會請求下面這些權限，每一個都對應一個你用得到的功能：</p>
+<table>
+  <tr><th>權限範圍</th><th>Ally 用它做什麼</th><th>它<em>不能</em>做什麼</th></tr>
+  <tr><td><code>calendar.events</code></td>
+      <td>查你今天／這週的行程；在你逐項確認之後，建立或修改事件</td>
+      <td>不會在你沒確認之前寫入任何東西</td></tr>
+  <tr><td><code>calendar.calendarlist.readonly</code></td>
+      <td>列出你有哪幾本日曆，才能把工作／家庭／學校的行程一起算進來</td>
+      <td>不能新增、刪除或改動日曆本身</td></tr>
+  <tr><td><code>calendar.settings.readonly</code></td>
+      <td>讀你 Google 帳號設定的時區，讓「明天早上十點」落在對的時間</td>
+      <td>不能更改任何設定</td></tr>
+  <tr><td><code>drive.file</code></td>
+      <td>只存取<strong>你親手在 Google 選擇器裡挑的檔案</strong>，或 Ally 幫你建立的檔案</td>
+      <td>看不到你雲端硬碟裡的其他任何檔案</td></tr>
+  <tr><td><code>documents</code> / <code>spreadsheets</code></td>
+      <td>讀取與編輯上面那些文件／試算表的內容（編輯前一定先讓你看到要改什麼）</td>
+      <td>碰不到你沒挑過的檔案</td></tr>
+  <tr><td><code>forms.body</code></td>
+      <td>依你的描述建立表單、加題目</td>
+      <td>不會幫你把表單發給任何人</td></tr>
+  <tr><td><code>forms.responses.readonly</code></td>
+      <td>讀取表單收到的回覆，整理成你看得懂的統計</td>
+      <td>不能代你回覆或修改別人的填答</td></tr>
+</table>
+<p>我們刻意<strong>不</strong>要求 Google 日曆的完整權限，也<strong>不</strong>要求能瀏覽整個雲端硬碟的
+權限——那些權限做得到的事（建立／刪除日曆、修改日曆共用設定、翻你所有檔案），Ally 一件都不做。</p>
+
+<h3>這些資料放在哪裡、放多久</h3>
 <ul>
-  <li><b>你傳給 Ally 的訊息內容</b>：用來理解你的指令並執行（例如建立待辦、查詢清單）。</li>
-  <li><b>你建立的資料</b>：待辦事項、筆記、專案、任務及其內容，儲存在我們的資料庫中，
-      直到你刪除或要求刪除帳號為止。</li>
-  <li><b>語音、圖片、文件</b>：你傳送的錄音、圖片、文件會被暫時快取（30 分鐘內）
-      以供處理（轉錄、辨識、摘要），之後自動清除，不會長期保存原始檔案。</li>
-  <li><b>Google 帳號授權（選用）</b>：如果你選擇連結 Google 帳號，我們會請求存取
-      你的 Google 日曆、雲端硬碟文件／試算表／表單的權限，僅用於執行你明確要求的操作
-      （例如「幫我建一個文件」），授權憑證會加密儲存。</li>
-  <li><b>你的 LINE／WhatsApp 帳號識別碼</b>：用來辨識你是誰、對應到你的資料，
-      我們不會取得你的真實姓名或聯絡人清單。</li>
+  <li><strong>我們不保存你 Google 內容的副本。</strong>行事曆事件、文件內容、表單回覆都是
+      在你提出要求的當下即時讀取，用完就丟。</li>
+  <li>文件摘要／圖片辨識／語音轉錄過程中的暫存內容，存活 <strong>30 至 60 分鐘</strong>，
+      到期自動刪除。</li>
+  <li>長期保存的只有：你連結過的檔案<strong>識別碼、檔名、類型</strong>（這樣你下次說
+      「那份報名表」時 Ally 找得到），以及加密後的授權憑證。</li>
+  <li>授權憑證<strong>加密儲存</strong>，而且在系統設計上<strong>絕不會被放進送往 AI 模型的內容裡</strong>
+      ——需要用到權杖的動作一律由後端代行。</li>
 </ul>
 
-<h2>我們如何使用這些資料</h2>
-<p>你的訊息內容會傳送給第三方 AI 服務（Anthropic Claude、Groq Whisper 語音辨識）
-以理解與回應你的請求。我們<b>不會把你的資料用於訓練 AI 模型，不會出售給第三方，
-不會用於廣告投放</b>。</p>
+<h3>Limited Use 聲明</h3>
+<div class="callout">
+  <p>Ally 對於從 Google API 取得之資訊的使用與轉移，均遵守
+     <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API 服務使用者資料政策</a>，
+     包含其中的 Limited Use 要求。</p>
+  <p>具體而言：從 Google Workspace API 取得的資料<strong>不會</strong>被用於開發、改進或訓練
+     任何一般化的 AI／機器學習模型；<strong>不會</strong>用於廣告；<strong>不會</strong>出售；
+     也<strong>不會</strong>提供給人類閱讀，除非取得你的明確同意、為了資安目的、或法律要求。</p>
+</div>
+
+<h2>你的訊息會經過哪些服務</h2>
+<p>要讀懂你講的話，Ally 需要把訊息內容送給 AI 模型處理。經手的服務如下：</p>
+<table>
+  <tr><th>服務</th><th>做什麼</th><th>會拿到什麼</th></tr>
+  <tr><td>LINE / Meta（WhatsApp）</td><td>訊息收發</td><td>你與 Ally 之間的訊息</td></tr>
+  <tr><td>OpenRouter → Anthropic（Claude）</td><td>理解指令、產生回覆、摘要文件</td>
+      <td>你的訊息內容；你要求處理的文件內容</td></tr>
+  <tr><td>Groq（Whisper）</td><td>語音轉文字</td><td>你傳的錄音</td></tr>
+  <tr><td>Supabase（PostgreSQL）</td><td>資料庫</td><td>上表所有長期保存的資料</td></tr>
+  <tr><td>Railway</td><td>應用程式主機</td><td>執行期間的資料</td></tr>
+  <tr><td>Google</td><td>行事曆／文件／表單 API</td><td>僅限你主動連結帳號後、你要求的操作</td></tr>
+</table>
+<p>送往 AI 模型的每一次請求，我們都在請求本身帶上<strong>「不得留存、不得用於訓練」</strong>的
+政策旗標——不是只在後台勾一個設定，而是寫在每一次呼叫裡，並且有自動化測試盯著它不准被拿掉。</p>
+<p>我們<strong>不會</strong>出售你的資料，<strong>不會</strong>用於廣告投放，也<strong>不會</strong>把你的資料
+提供給上表以外的第三方。</p>
 
 <h2>資料保留與刪除</h2>
-<p>你可以隨時要求刪除帳號，這會永久移除你在 Ally 裡的所有資料（待辦、專案、
-對話紀錄、已連結的 Google 授權）。這個動作無法復原。</p>
-
-<h2>第三方服務</h2>
-<p>Ally 依賴以下服務來運作：</p>
 <ul>
-  <li>Meta（WhatsApp Business Platform）／ LINE（訊息收發）</li>
-  <li>Anthropic（Claude，用於理解與回應訊息）</li>
-  <li>Groq（Whisper，用於語音轉文字）</li>
-  <li>Google（日曆、雲端硬碟、文件、表單 API，僅限你主動連結帳號後）</li>
-  <li>Railway、Supabase（伺服器與資料庫代管）</li>
+  <li><strong>對話紀錄</strong>：只保留最近的 50 則往返，更舊的自動刪除。</li>
+  <li><strong>你建立的內容</strong>：保留到你刪除它、或刪除帳號為止。</li>
+  <li><strong>暫存檔案</strong>：30–60 分鐘後自動清除。</li>
+  <li><strong>整個帳號</strong>：在對話中輸入「<code>刪除我的帳號</code>」，Ally 會告訴你將發生什麼，
+      並要你<strong>一字不差再輸入一次</strong>作為確認。執行時會：
+      <ol>
+        <li>先向 Google 撤銷 Ally 的授權；</li>
+        <li>永久刪除你的全部資料——待辦、專案、對話、快取、稽核紀錄，全部，無法復原。</li>
+      </ol>
+      刪除後只留下一筆不含任何個人資料的匿名計數紀錄。</li>
 </ul>
-<p>這些服務各自有自己的隱私權政策，適用於資料在其系統內傳輸與處理的部分。</p>
+<p>你也可以隨時到
+<a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Google 帳號的第三方應用程式設定</a>
+單獨撤銷 Google 授權——撤銷之後 Ally 就再也碰不到你的行事曆與文件，其他功能照常。</p>
+
+<h2>你的清單連結</h2>
+<p>Ally 會給你一個唯讀的清單網址（<code>/v/…</code>）讓你在瀏覽器裡看自己的待辦。
+這個網址<strong>不需要登入</strong>，安全性來自那串無法猜測的隨機字元（256 位元）。
+它是唯讀的——任何人就算拿到連結也只能看，不能改任何東西。請把它當成密碼看待，不要公開轉貼。</p>
+
+<h2>安全措施</h2>
+<ul>
+  <li>Google 授權憑證加密儲存，且不會進入送往 AI 模型的內容。</li>
+  <li>資料庫層開啟 Row Level Security，每一次查詢都綁定你的租戶，不同使用者的資料在資料庫層就隔離。</li>
+  <li>所有有副作用的動作（寫入行事曆、編輯文件、刪除資料）都要你先確認才執行。</li>
+  <li>從外部讀回來的內容（文件、網頁、圖片）一律視為「資料」而非「指令」，不會被當成命令執行。</li>
+</ul>
+
+<h2>兒童</h2>
+<p>Ally 不針對 13 歲以下兒童提供服務，也不會刻意收集其資料。</p>
+
+<h2>國際傳輸</h2>
+<p>Ally 的伺服器與資料庫位於美國與新加坡，上述第三方服務可能在其他國家處理資料。
+使用 Ally 即表示你了解資料會跨境傳輸。</p>
+
+<h2>政策變更</h2>
+<p>本政策如有變更，會更新本頁最上方的日期；如屬重大變更，Ally 會在對話中主動告知你。</p>
 
 <h2>聯絡我們</h2>
-<p>如有隱私權相關問題，請透過 <a href="mailto:likemark1022@gmail.com">likemark1022@gmail.com</a> 聯絡我們。</p>
+<p>任何隱私權問題，或想要一份你的資料副本，請寄信到
+<a href="mailto:likemark1022@gmail.com">likemark1022@gmail.com</a>。</p>
+</div>
+<div data-lang="en">
+<h1>Privacy Policy</h1>
+<p class="updated">Last updated: 2026-09-12</p>
+<p class="lede">Ally is a personal AI assistant that lives inside LINE and WhatsApp. It acts on your
+calendar and your documents — which is exactly why you deserve a plain answer to: what can it reach,
+what can it never reach, where does anything live, and how do you take it all back at once.</p>
 
-<footer>Ally — Personal Assistant for LINE &amp; WhatsApp</footer>
+<h2>Who handles your data</h2>
+<p>Ally is operated by an independent developer. Contact:
+<a href="mailto:likemark1022@gmail.com">likemark1022@gmail.com</a>. Privacy questions, data access
+requests and deletion requests all reach a human at that address.</p>
 
+<h2>What we collect</h2>
+<table>
+  <tr><th>Category</th><th>What it is</th><th>Why we need it</th></tr>
+  <tr><td>Account identifier</td><td>Your LINE / WhatsApp user ID, time zone, language preference</td>
+      <td>To know who "you" are and deliver reminders at the right local time</td></tr>
+  <tr><td>Messages you send Ally</td><td>The text you type and Ally's replies</td>
+      <td>To understand your request and hold the thread of a conversation</td></tr>
+  <tr><td>Content you create</td><td>To-dos, projects, tasks, notes, deadlines, availability, reminder rules</td>
+      <td>This is the thing Ally is keeping track of for you</td></tr>
+  <tr><td>Files in transit</td><td>Voice messages, images and documents you send</td>
+      <td>Transcription, recognition, summarisation — deleted after processing (see retention)</td></tr>
+  <tr><td>Google authorisation (optional)</td><td>Encrypted OAuth credentials, plus the IDs and names of files you linked</td>
+      <td>To act on your calendar and documents, and to find "that form" when you mention it again</td></tr>
+  <tr><td>Operational records</td><td>Action audit log, daily usage counters</td>
+      <td>Incident investigation and cost control</td></tr>
+</table>
+<p><strong>We do not receive</strong> your real name, your email address (unless you tell Ally
+yourself), your address book or contact list, and we cannot read your conversations with anyone
+else on LINE or WhatsApp. Ally only sees messages you send directly to it.</p>
+
+<h2>Google user data (the section that matters)</h2>
+<p>Connecting a Google account is <strong>optional</strong> — Ally's to-do and project features work
+without it. If you do connect, we request only the scopes below, each tied to a feature you can use:</p>
+<table>
+  <tr><th>Scope</th><th>What Ally does with it</th><th>What it <em>cannot</em> do</th></tr>
+  <tr><td><code>calendar.events</code></td>
+      <td>Read your schedule for a day or range; create or modify events after you confirm each one</td>
+      <td>Never writes anything before you confirm</td></tr>
+  <tr><td><code>calendar.calendarlist.readonly</code></td>
+      <td>List which calendars you have, so work, family and school time all count toward your availability</td>
+      <td>Cannot create, delete or modify a calendar itself</td></tr>
+  <tr><td><code>calendar.settings.readonly</code></td>
+      <td>Read the time zone on your Google account so "tomorrow at 10am" lands at the right moment</td>
+      <td>Cannot change any setting</td></tr>
+  <tr><td><code>drive.file</code></td>
+      <td>Access only the files <strong>you personally picked in Google's own file picker</strong>, or files Ally created for you</td>
+      <td>Cannot see any other file in your Drive</td></tr>
+  <tr><td><code>documents</code> / <code>spreadsheets</code></td>
+      <td>Read and edit the content of those documents and sheets — always showing you the change before making it</td>
+      <td>Cannot touch a file you never picked</td></tr>
+  <tr><td><code>forms.body</code></td>
+      <td>Create a form and its questions from your description</td>
+      <td>Never distributes the form to anyone on your behalf</td></tr>
+  <tr><td><code>forms.responses.readonly</code></td>
+      <td>Read the responses a form received and summarise them for you</td>
+      <td>Cannot submit or alter anyone's response</td></tr>
+</table>
+<p>We deliberately do <strong>not</strong> request full Google Calendar access, and do <strong>not</strong>
+request any scope that can browse your whole Drive. Everything those broader scopes allow — creating
+or deleting calendars, changing sharing settings, reading files you never chose — Ally simply does not do.</p>
+
+<h3>Where this data lives, and for how long</h3>
+<ul>
+  <li><strong>We keep no copy of your Google content.</strong> Calendar events, document content and
+      form responses are read live at the moment you ask, used, and discarded.</li>
+  <li>Intermediate content during summarisation, image recognition or transcription lives for
+      <strong>30 to 60 minutes</strong> and is then deleted automatically.</li>
+  <li>The only things kept long-term are: the <strong>ID, name and type</strong> of files you linked
+      (so "that sign-up form" still resolves next week), and your encrypted credentials.</li>
+  <li>Credentials are <strong>encrypted at rest</strong> and, by design, are
+      <strong>never placed into anything sent to an AI model</strong> — every call that needs a token
+      is made by the backend on your behalf.</li>
+</ul>
+
+<h3>Limited Use disclosure</h3>
+<div class="callout">
+  <p>Ally's use and transfer to any other app of information received from Google APIs will adhere to the
+     <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>,
+     including the Limited Use requirements.</p>
+  <p>Specifically: data obtained from Google Workspace APIs is <strong>not</strong> used to develop,
+     improve or train generalised AI and/or machine-learning models; is <strong>not</strong> used for
+     advertising; is <strong>not</strong> sold; and is <strong>not</strong> read by humans except with
+     your explicit consent, for security purposes, or where required by law.</p>
+</div>
+
+<h2>Which services your messages pass through</h2>
+<p>To understand what you say, Ally sends message content to AI models. The processors involved:</p>
+<table>
+  <tr><th>Service</th><th>Role</th><th>What it receives</th></tr>
+  <tr><td>LINE / Meta (WhatsApp)</td><td>Message delivery</td><td>Messages between you and Ally</td></tr>
+  <tr><td>OpenRouter &rarr; Anthropic (Claude)</td><td>Understanding, replies, summarisation</td>
+      <td>Your message content; content of documents you ask about</td></tr>
+  <tr><td>Groq (Whisper)</td><td>Speech to text</td><td>Voice messages you send</td></tr>
+  <tr><td>Supabase (PostgreSQL)</td><td>Database</td><td>Everything stored long-term above</td></tr>
+  <tr><td>Railway</td><td>Application hosting</td><td>Data in transit during processing</td></tr>
+  <tr><td>Google</td><td>Calendar / Docs / Forms APIs</td><td>Only after you connect, only what you ask for</td></tr>
+</table>
+<p>Every request we send to an AI model carries a <strong>no-retention, no-training</strong> policy flag
+on the request itself — not merely a checkbox in a dashboard — and an automated test prevents that flag
+from being removed.</p>
+<p>We do <strong>not</strong> sell your data, do <strong>not</strong> use it for advertising, and do
+<strong>not</strong> share it with third parties beyond the table above.</p>
+
+<h2>Retention and deletion</h2>
+<ul>
+  <li><strong>Conversation history</strong>: only the 50 most recent turns are kept; older ones are deleted automatically.</li>
+  <li><strong>Content you created</strong>: kept until you delete it, or delete your account.</li>
+  <li><strong>Files in transit</strong>: purged after 30–60 minutes.</li>
+  <li><strong>The whole account</strong>: type "<code>刪除我的帳號</code>" ("delete my account") in the chat.
+      Ally explains exactly what will happen and requires you to type the phrase again, character for
+      character, to confirm. On execution it:
+      <ol>
+        <li>revokes Ally's authorisation with Google first, then</li>
+        <li>permanently deletes all of your data — to-dos, projects, conversations, caches and audit
+            records — with no recovery.</li>
+      </ol>
+      All that remains is an anonymous counter row containing no personal data.</li>
+</ul>
+<p>You can also revoke Google access on its own at any time from
+<a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">your Google account's third-party apps settings</a>.
+After that Ally can no longer reach your calendar or documents; everything else keeps working.</p>
+
+<h2>Your list link</h2>
+<p>Ally gives you a read-only web address (<code>/v/…</code>) for viewing your own list in a browser.
+That address requires <strong>no login</strong>; its security comes from an unguessable 256-bit random
+token. It is read-only — anyone holding the link can look, but can change nothing. Treat it like a
+password and don't post it publicly.</p>
+
+<h2>Security</h2>
+<ul>
+  <li>Google credentials are encrypted at rest and never enter AI model input.</li>
+  <li>Row Level Security is enabled at the database layer; every query is bound to your tenant, so
+      users' data is isolated in the database itself.</li>
+  <li>Every side-effecting action — writing to your calendar, editing a document, deleting data —
+      requires your confirmation first.</li>
+  <li>Content fetched from outside (documents, pages, images) is treated as data, never as instructions,
+      and is never executed as a command.</li>
+</ul>
+
+<h2>Children</h2>
+<p>Ally is not directed at children under 13 and does not knowingly collect their data.</p>
+
+<h2>International transfers</h2>
+<p>Ally's servers and database are located in the United States and Singapore, and the processors above
+may handle data in other countries. By using Ally you understand that data crosses borders.</p>
+
+<h2>Changes to this policy</h2>
+<p>If this policy changes we update the date at the top of this page; for material changes Ally will
+tell you in the chat.</p>
+
+<h2>Contact</h2>
+<p>For any privacy question, or to request a copy of your data, write to
+<a href="mailto:likemark1022@gmail.com">likemark1022@gmail.com</a>.</p>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="ft-links">
+      <a href="./">Ally</a>
+      <a href="./privacy.html">Privacy</a>
+      <a href="./terms.html">Terms</a>
+      <a href="mailto:likemark1022@gmail.com">Contact</a>
+    </div>
+    <span class="ft-copy">&copy; 2026 Ally. All rights reserved.</span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var html = document.documentElement;
+    var panes = document.querySelectorAll('[data-lang]');
+    var btns = document.querySelectorAll('.langsw button');
+    function set(lang) {
+      panes.forEach(function (p) { p.classList.toggle('on', p.dataset.lang === lang); });
+      btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.set === lang)); });
+      html.lang = lang === 'en' ? 'en' : 'zh-Hant';
+      if (history.replaceState) {
+        history.replaceState(null, '', lang === 'en' ? '#en' : location.pathname);
+      }
+    }
+    btns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        set(b.dataset.set);
+        window.scrollTo(0, 0);   // 換語言等於換一份文件，停在原本的捲動位置只會讓人迷路
+      });
+    });
+    // 給審查員/英語使用者的直達連結：?lang=en 或 #en
+    var q = new URLSearchParams(location.search).get('lang');
+    if (q === 'en' || location.hash === '#en') { set('en'); }
+  })();
+</script>
 </body>
 </html>
